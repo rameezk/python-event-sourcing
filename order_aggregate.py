@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 # How one would typically model an e-commerce order
 #
 # class Order:
@@ -17,24 +19,14 @@
 # -- if a user_id changes (new order is created?)
 
 
+@dataclass
 class OrderCreated:
-    def __init__(self, user_id: int):
-        self.user_id = user_id
-
-    def __eq__(self, other):
-        if isinstance(self, other.__class__):
-            return self.__dict__ == other.__dict__
-        return False
+    user_id: int
 
 
+@dataclass
 class StatusChanged:
-    def __init__(self, new_status: str):
-        self.new_status = new_status
-
-    def __eq__(self, other):
-        if isinstance(self, other.__class__):
-            return self.__dict__ == other.__dict__
-        return False
+    new_status: str
 
 
 class Order:
