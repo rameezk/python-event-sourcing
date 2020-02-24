@@ -1,5 +1,8 @@
 import functools
-from dataclasses import dataclass
+import uuid
+
+from event_store import EventStream, Event
+from events import OrderCreated, StatusChanged
 
 
 def method_dispatch(func):
@@ -13,28 +16,21 @@ def method_dispatch(func):
     return wrapper
 
 
-@dataclass
-class OrderCreated:
-    user_id: int
-
-
-@dataclass
-class StatusChanged:
-    new_status: str
-
-
 class Order:
-    def __init__(self, events: list):
+    def __init__(self, event_stream: EventStream):
         self.user_id = None
         self.status = None
+        self.version = event_stream.version
+        self.uuid = uuid.uuid4()
 
-        for event in events:
+        for event in event_stream.events:
             self.apply(event)
 
         self.changes = []
 
     @method_dispatch
     def apply(self, event):
+        print(event)
         raise ValueError("Unknown event!")
 
     @apply.register(OrderCreated)
@@ -57,6 +53,6 @@ class Order:
     @classmethod
     def create(cls, user_id: int):
         initial_event = OrderCreated(user_id)
-        instance = cls([initial_event])
+        instance = cls(EventStream([initial_event]))
         instance.changes = [initial_event]
         return instance

@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    volumes:
+      - event-sourcing-postgresql-data:/var/lib/postgresql
+    container_name: event-sourcing-postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+
+volumes:
+  event-sourcing-postgresql-data:
